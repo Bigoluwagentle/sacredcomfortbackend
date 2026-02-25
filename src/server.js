@@ -4,6 +4,7 @@ import connectMongoDB from './config/db.mongo.js';
 import { connectPostgres } from './config/db.postgres.js';
 import { connectRedis } from './config/redis.js';
 import logger from './utils/logger.js';
+import './models/postgres/index.js';
 
 const PORT = process.env.PORT || 5000;
 
