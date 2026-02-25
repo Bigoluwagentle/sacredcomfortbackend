@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
@@ -25,7 +24,6 @@ export const io = new Server(httpServer, {
 });
 
 app.use(helmet());
-app.use(mongoSanitize());
 app.use(hpp());
 
 app.use(cors({
@@ -70,7 +68,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/v1', routes);
 
-app.use('*', (req, res) => {
+app.use('*splat', (req, res) => {
   res.status(404).json({
     success: false,
     message: `Route ${req.originalUrl} not found`,
