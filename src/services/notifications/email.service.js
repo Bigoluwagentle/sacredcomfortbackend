@@ -70,8 +70,7 @@ export const sendVerificationOTPEmail = async (email, fullName, otp) => {
       <h2 style="color: #4A90A4;">Sacred Comfort - Email Verification</h2>
       <p>Dear ${fullName},</p>
       <p>Thank you for registering. Use the OTP below to verify your email address.</p>
-      <div style="background-color: #f4f4f4; padding: 20px; text-align: center; 
-                  border-radius: 8px; margin: 20px 0;">
+      <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
         <h1 style="color: #4A90A4; letter-spacing: 8px; font-size: 36px;">${otp}</h1>
       </div>
       <p>This code expires in <strong>10 minutes</strong>.</p>
@@ -84,4 +83,5 @@ export const sendVerificationOTPEmail = async (email, fullName, otp) => {
 };
 
 export default sendEmail;
+
 

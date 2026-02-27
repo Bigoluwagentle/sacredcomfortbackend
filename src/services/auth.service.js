@@ -4,6 +4,11 @@ import Analytics from '../models/mongo/Analytics.model.js';
 import Memory from '../models/mongo/Memory.model.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { sendVerificationOTPEmail, sendWelcomeEmail } from './notifications/email.service.js';
+
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
 export const registerUser = async (userData) => {
   const { fullName, email, password, religiousPreference, preferredLanguage } = userData;
