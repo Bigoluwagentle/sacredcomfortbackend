@@ -62,6 +62,8 @@ const userSchema = new mongoose.Schema(
     lastSeen: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    emailVerificationOTP: String,
+    emailVerificationOTPExpires: Date,
   },
   { timestamps: true }
 );
