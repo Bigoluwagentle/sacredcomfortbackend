@@ -58,6 +58,10 @@ const userSchema = new mongoose.Schema(
       default: 'Identified',
     },
     isEmailVerified: { type: Boolean, default: false },
+    profilePicture: {
+      url: { type: String, default: '' },
+      publicId: { type: String, default: '' },
+    },
     isActive: { type: Boolean, default: true },
     lastSeen: Date,
     passwordResetToken: String,
