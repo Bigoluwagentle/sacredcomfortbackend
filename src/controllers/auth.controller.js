@@ -1,8 +1,6 @@
 import * as authService from '../services/auth.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
-import asyncHandler from '../utils/asyncHandler.js';
-import { successResponse } from '../utils/apiResponse.js';
 
 export const register = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.registerUser(req.body);
