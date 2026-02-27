@@ -6,6 +6,8 @@ import {
   forgotPassword,
   resetPassword,
   deleteAccount,
+  verifyEmail,
+  resendOTP,
 } from '../controllers/auth.controller.js';
 import protect from '../middleware/auth.middleware.js';
 
@@ -17,5 +19,7 @@ router.post('/logout', protect, logout);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:token', resetPassword);
 router.delete('/delete-account', protect, deleteAccount);
+router.post('/verify-email', protect, verifyEmail);
+router.post('/resend-otp', protect, resendOTP);
 
 export default router;
