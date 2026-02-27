@@ -1,6 +1,8 @@
 import * as authService from '../services/auth.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import { successResponse } from '../utils/apiResponse.js';
 
 export const register = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.registerUser(req.body);
@@ -96,4 +98,17 @@ export const deleteAccount = asyncHandler(async (req, res) => {
   });
 
   successResponse(res, 200, 'Account deleted successfully. We are sorry to see you go.');
+});
+
+export const verifyEmail = asyncHandler(async (req, res) => {
+  const { otp } = req.body;
+  await authService.verifyEmail(req.user._id, otp);
+
+  successResponse(res, 200, 'Email verified successfully! Welcome to Sacred Comfort.');
+});
+
+export const resendOTP = asyncHandler(async (req, res) => {
+  await authService.resendOTP(req.user._id);
+
+  successResponse(res, 200, 'A new OTP has been sent to your email address.');
 });

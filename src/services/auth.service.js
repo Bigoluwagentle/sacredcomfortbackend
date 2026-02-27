@@ -13,11 +13,13 @@ const generateOTP = () => {
 export const registerUser = async (userData) => {
   const { fullName, email, password, religiousPreference, preferredLanguage } = userData;
 
-
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new AppError('Email already registered. Please log in.', 400);
   }
+
+  const otp = generateOTP();
+  const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
   const user = await User.create({
     fullName,
@@ -25,17 +27,72 @@ export const registerUser = async (userData) => {
     password,
     religiousPreference,
     preferredLanguage: preferredLanguage || 'en',
+    emailVerificationOTP: otp,
+    emailVerificationOTPExpires: otpExpires,
   });
-
 
   await Analytics.create({ userId: user._id });
 
   await Memory.create({ userId: user._id });
 
+  await sendVerificationOTPEmail(email, fullName, otp);
+
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
   return { user, accessToken, refreshToken };
+};
+
+export const verifyEmail = async (userId, otp) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError('User not found.', 404);
+  }
+
+  if (user.isEmailVerified) {
+    throw new AppError('Email is already verified.', 400);
+  }
+
+  if (!user.emailVerificationOTP || !user.emailVerificationOTPExpires) {
+    throw new AppError('No OTP found. Please request a new one.', 400);
+  }
+
+  if (user.emailVerificationOTPExpires < Date.now()) {
+    throw new AppError('OTP has expired. Please request a new one.', 400);
+  }
+
+  if (user.emailVerificationOTP !== otp) {
+    throw new AppError('Invalid OTP. Please try again.', 400);
+  }
+
+  user.isEmailVerified = true;
+  user.emailVerificationOTP = undefined;
+  user.emailVerificationOTPExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  await sendWelcomeEmail(user.email, user.fullName);
+
+  return user;
+};
+
+export const resendOTP = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError('User not found.', 404);
+  }
+
+  if (user.isEmailVerified) {
+    throw new AppError('Email is already verified.', 400);
+  }
+
+  const otp = generateOTP();
+  user.emailVerificationOTP = otp;
+  user.emailVerificationOTPExpires = Date.now() + 10 * 60 * 1000;
+  await user.save({ validateBeforeSave: false });
+
+  await sendVerificationOTPEmail(user.email, user.fullName, otp);
+
+  return true;
 };
 
 export const loginUser = async (email, password) => {
