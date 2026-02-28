@@ -3,6 +3,7 @@ import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import chatRoutes from './chat.routes.js';
 import memoryRoutes from './memory.routes.js';
+import prayerRoutes from './prayer.routes.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/chat', chatRoutes);
 router.use('/memory', memoryRoutes);
+router.use('/prayers', prayerRoutes);
 
 export default router;
