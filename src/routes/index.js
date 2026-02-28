@@ -4,6 +4,7 @@ import userRoutes from './user.routes.js';
 import chatRoutes from './chat.routes.js';
 import memoryRoutes from './memory.routes.js';
 import prayerRoutes from './prayer.routes.js';
+import favoritesRoutes from './favorites.routes.js';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/users', userRoutes);
 router.use('/chat', chatRoutes);
 router.use('/memory', memoryRoutes);
 router.use('/prayers', prayerRoutes);
+router.use('/favorites', favoritesRoutes);
 
 export default router;
