@@ -11,6 +11,7 @@ import therapistRoutes from './therapist.routes.js';
 import bookingRoutes from './booking.routes.js';
 import paymentRoutes from './payment.routes.js';
 import notificationRoutes from './notification.routes.js';
+import adminRoutes from './admin.routes.js';
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/therapists', therapistRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;
