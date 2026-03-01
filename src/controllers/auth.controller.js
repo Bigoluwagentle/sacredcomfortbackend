@@ -1,6 +1,7 @@
 import * as authService from '../services/auth.service.js';
-import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 
 export const register = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.registerUser(req.body);
@@ -109,4 +110,25 @@ export const resendOTP = asyncHandler(async (req, res) => {
   await authService.resendOTP(req.user._id);
 
   successResponse(res, 200, 'A new OTP has been sent to your email address.');
+});
+
+export const googleAuthCallback = asyncHandler(async (req, res) => {
+  const user = req.user;
+
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  const isNewUser = !req.user.religiousPreference || req.user.religiousPreference === 'Other';
+  const redirectUrl = isNewUser
+    ? `${process.env.CLIENT_URL}/onboarding?token=${accessToken}`
+    : `${process.env.CLIENT_URL}/dashboard?token=${accessToken}`;
+
+  res.redirect(redirectUrl);
 });
