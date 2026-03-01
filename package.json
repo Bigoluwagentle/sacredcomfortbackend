@@ -47,6 +47,7 @@
     "passport-apple": "^2.0.2",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
+    "paystack": "^2.0.1",
     "pg": "^8.18.0",
     "pg-hstore": "^2.3.4",
     "redis": "^5.11.0",

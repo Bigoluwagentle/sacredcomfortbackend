@@ -1,4 +1,4 @@
-import Paystack from 'paystack-node';
+import Paystack from 'paystack';
 import Booking from '../models/mongo/Booking.model.js';
 import User from '../models/mongo/User.model.js';
 import { AppError } from '../middleware/error.middleware.js';
