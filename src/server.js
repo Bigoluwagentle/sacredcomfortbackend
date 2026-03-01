@@ -5,6 +5,10 @@ import { connectPostgres } from './config/db.postgres.js';
 import { connectRedis } from './config/redis.js';
 import logger from './utils/logger.js';
 import './models/postgres/index.js';
+import dailyVerseJob from './jobs/dailyVerse.job.js';
+import sessionReminderJob from './jobs/sessionReminder.job.js';
+import memoryConsolidationJob from './jobs/memoryConsolidation.job.js';
+import subscriptionRenewalJob from './jobs/subscriptionRenewal.job.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -13,6 +17,12 @@ const startServer = async () => {
     await connectMongoDB();
     await connectPostgres();
     await connectRedis();
+    
+    dailyVerseJob.start();
+    sessionReminderJob.start();
+    memoryConsolidationJob.start();
+    subscriptionRenewalJob.start();
+    logger.info('All cron jobs started.');
 
     httpServer.listen(PORT, () => {
       logger.info(`
