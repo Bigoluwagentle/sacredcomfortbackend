@@ -27,6 +27,7 @@
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.19",
     "dotenv": "^17.3.1",
+    "elevenlabs": "^1.59.0",
     "express": "^5.2.1",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
