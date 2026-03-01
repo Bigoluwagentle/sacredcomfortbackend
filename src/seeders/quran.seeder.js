@@ -130,20 +130,25 @@ export const seedQuran = async () => {
     for (const surah of surahs) {
       try {
         const arabicResponse = await axios.get(
-          `https://api.alquran.cloud/v1/surah/${surah.number}`
+            `https://api.alquran.cloud/v1/surah/${surah.number}`
         );
 
         const englishResponse = await axios.get(
-          `https://api.alquran.cloud/v1/surah/${surah.number}/en.sahih`
+            `https://api.alquran.cloud/v1/surah/${surah.number}/en.sahih`
         );
 
         const yusufAliResponse = await axios.get(
-          `https://api.alquran.cloud/v1/surah/${surah.number}/en.yusufali`
+            `https://api.alquran.cloud/v1/surah/${surah.number}/en.yusufali`
+        );
+
+        const transliterationResponse = await axios.get(
+        `https://api.alquran.cloud/v1/surah/${surah.number}/en.transliteration`
         );
 
         const arabicVerses = arabicResponse.data.data.ayahs;
         const englishVerses = englishResponse.data.data.ayahs;
         const yusufAliVerses = yusufAliResponse.data.data.ayahs;
+        const transliterationVerses = transliterationResponse.data.data.ayahs;
 
         const tags = surahTags[surah.number] || {
           themeTags: ['faith', 'guidance'],
@@ -151,17 +156,18 @@ export const seedQuran = async () => {
         };
 
         const versesToInsert = arabicVerses.map((ayah, index) => ({
-          surahNumber: surah.number,
-          surahNameArabic: surah.name,
-          surahNameEnglish: surah.englishName,
-          ayahNumber: ayah.numberInSurah,
-          textArabic: ayah.text,
-          translationEnglishSahih: englishVerses[index]?.text || '',
-          translationEnglishYusufAli: yusufAliVerses[index]?.text || '',
-          themeTags: tags.themeTags,
-          emotionTags: tags.emotionTags,
-          religion: 'Islam',
-          embeddingVector: [],
+            surahNumber: surah.number,
+            surahNameArabic: surah.name,
+            surahNameEnglish: surah.englishName,
+            ayahNumber: ayah.numberInSurah,
+            textArabic: ayah.text,
+            translationEnglishSahih: englishVerses[index]?.text || '',
+            translationEnglishYusufAli: yusufAliVerses[index]?.text || '',
+            transliteration: transliterationVerses[index]?.text || '',
+            themeTags: tags.themeTags,
+            emotionTags: tags.emotionTags,
+            religion: 'Islam',
+            embeddingVector: [],
         }));
 
         await Quran.bulkCreate(versesToInsert);
