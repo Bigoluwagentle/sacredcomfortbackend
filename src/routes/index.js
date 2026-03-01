@@ -7,6 +7,8 @@ import prayerRoutes from './prayer.routes.js';
 import favoritesRoutes from './favorites.routes.js';
 import scriptureRoutes from './scripture.routes.js';
 import analyticsRoutes from './analytics.routes.js';
+import therapistRoutes from './therapist.routes.js';
+import bookingRoutes from './booking.routes.js';
 
 const router = Router();
 
@@ -26,5 +28,7 @@ router.use('/prayers', prayerRoutes);
 router.use('/favorites', favoritesRoutes);
 router.use('/scripture', scriptureRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/therapists', therapistRoutes);
+router.use('/bookings', bookingRoutes);
 
 export default router;
