@@ -10,6 +10,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 
 import routes from './routes/index.js';
+import passport from './config/passport.js';
 import errorHandler from './middleware/error.middleware.js';
 import logger from './utils/logger.js';
 
@@ -44,6 +45,7 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
+app.use(passport.initialize());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
