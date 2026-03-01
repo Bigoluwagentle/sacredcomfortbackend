@@ -9,7 +9,7 @@ import dailyVerseJob from './jobs/dailyVerse.job.js';
 import sessionReminderJob from './jobs/sessionReminder.job.js';
 import memoryConsolidationJob from './jobs/memoryConsolidation.job.js';
 import subscriptionRenewalJob from './jobs/subscriptionRenewal.job.js';
-import initializeChatSocket from './sockets/chat.socket.js';
+import initializeChatSocket, { initializeVoiceSocket } from './sockets/chat.socket.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -18,8 +18,9 @@ const startServer = async () => {
     await connectMongoDB();
     await connectPostgres();
     await connectRedis();
-    
+
     initializeChatSocket();
+    initializeVoiceSocket();
     
     dailyVerseJob.start();
     sessionReminderJob.start();
