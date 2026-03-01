@@ -6,6 +6,7 @@ import memoryRoutes from './memory.routes.js';
 import prayerRoutes from './prayer.routes.js';
 import favoritesRoutes from './favorites.routes.js';
 import scriptureRoutes from './scripture.routes.js';
+import analyticsRoutes from './analytics.routes.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/memory', memoryRoutes);
 router.use('/prayers', prayerRoutes);
 router.use('/favorites', favoritesRoutes);
 router.use('/scripture', scriptureRoutes);
+router.use('/analytics', analyticsRoutes);
 
 export default router;
