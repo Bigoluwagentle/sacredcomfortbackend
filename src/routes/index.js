@@ -9,6 +9,7 @@ import scriptureRoutes from './scripture.routes.js';
 import analyticsRoutes from './analytics.routes.js';
 import therapistRoutes from './therapist.routes.js';
 import bookingRoutes from './booking.routes.js';
+import paymentRoutes from './payment.routes.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/scripture', scriptureRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/therapists', therapistRoutes);
 router.use('/bookings', bookingRoutes);
+router.use('/payments', paymentRoutes);
 
 export default router;
