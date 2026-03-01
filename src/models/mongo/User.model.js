@@ -57,6 +57,11 @@ const userSchema = new mongoose.Schema(
       enum: ['Anonymous', 'Identified'],
       default: 'Identified',
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
     isEmailVerified: { type: Boolean, default: false },
     profilePicture: {
       url: { type: String, default: '' },
