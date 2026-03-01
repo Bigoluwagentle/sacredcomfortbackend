@@ -10,6 +10,7 @@ import analyticsRoutes from './analytics.routes.js';
 import therapistRoutes from './therapist.routes.js';
 import bookingRoutes from './booking.routes.js';
 import paymentRoutes from './payment.routes.js';
+import notificationRoutes from './notification.routes.js';
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/analytics', analyticsRoutes);
 router.use('/therapists', therapistRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/notifications', notificationRoutes);
 
 export default router;
