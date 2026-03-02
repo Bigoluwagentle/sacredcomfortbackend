@@ -79,20 +79,20 @@ const bookTags = {
 
 export const seedBible = async () => {
   try {
-    const count = await Bible.count();
-    logger.info(`Bible has ${count} records. Continuing to seed missing books...`);
-
     logger.info('Starting Bible seeding from API...');
-
     const booksResponse = await axios.get(
       `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/books`,
       { headers: { 'api-key': BIBLE_API_KEY } }
     );
-
     const books = booksResponse.data.data;
     let totalSeeded = 0;
 
     for (const book of books) {
+      const existing = await Bible.count({ where: { bookName: book.name } });
+      if (existing > 0) {
+        logger.info(`Skipping ${book.name} - already seeded (${existing} verses)`);
+        continue;
+      }
       try {
         const chaptersResponse = await axios.get(
           `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/books/${book.id}/chapters`,
@@ -146,7 +146,7 @@ export const seedBible = async () => {
                   totalSeeded++;
                 }
 
-                await new Promise((resolve) => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 500));
 
               } catch (verseError) {
                 logger.error(`Error seeding verse ${verse.id}: ${verseError.message}`);
