@@ -1,6 +1,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+process.env.PG_PASSWORD = String(process.env.PG_PASSWORD);
+process.env.PG_PORT = String(process.env.PG_PORT);
+process.env.PG_HOST = String(process.env.PG_HOST);
+process.env.PG_USER = String(process.env.PG_USER);
+process.env.PG_DATABASE = String(process.env.PG_DATABASE);
+
 import connectMongo from '../config/db.mongo.js';
 import { sequelize } from '../models/postgres/index.js';
 import { seedQuran } from './quran.seeder.js';
@@ -18,6 +24,7 @@ const runSeeders = async () => {
 
     await connectMongo();
     await sequelize.authenticate();
+    await sequelize.sync();
     logger.info('✅ Databases connected.');
 
     logger.info('Seeding Crisis Resources...');

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Bible } from '../models/postgres/index.js';
 import logger from '../utils/logger.js';
 
-const BIBLE_API_KEY = process.env.BIBLE_API_KEY;
-const BIBLE_API_URL = 'https://api.scripture.api.bible/v1';
+const BIBLE_API_KEY = process.env.BIBLE_API_KEY || "eXyaixjI2QkrgWmbK-B1S";
+const BIBLE_API_URL = 'https://rest.api.bible/v1';
 
 const KJV_BIBLE_ID = 'de4e12af7f28f599-02';
 const NIV_BIBLE_ID = '06125adad2d5898a-01';
@@ -80,10 +80,7 @@ const bookTags = {
 export const seedBible = async () => {
   try {
     const count = await Bible.count();
-    if (count > 0) {
-      logger.info(`Bible already seeded (${count} records). Skipping...`);
-      return;
-    }
+    logger.info(`Bible has ${count} records. Continuing to seed missing books...`);
 
     logger.info('Starting Bible seeding from API...');
 
