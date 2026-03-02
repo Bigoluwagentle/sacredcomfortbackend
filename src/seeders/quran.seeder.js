@@ -114,20 +114,17 @@ const surahTags = {
 
 export const seedQuran = async () => {
   try {
-    const count = await Quran.count();
-    if (count > 0) {
-      logger.info(`Quran already seeded (${count} records). Skipping...`);
-      return;
-    }
-
     logger.info('Starting Quran seeding from API...');
-
     const surahsResponse = await axios.get('https://api.alquran.cloud/v1/surah');
     const surahs = surahsResponse.data.data;
-
     let totalSeeded = 0;
 
     for (const surah of surahs) {
+      const existing = await Quran.count({ where: { surahNumber: surah.number } });
+      if (existing > 0) {
+        logger.info(`Skipping Surah ${surah.number} - already seeded (${existing} verses)`);
+        continue;
+      }
       try {
         const arabicResponse = await axios.get(
             `https://api.alquran.cloud/v1/surah/${surah.number}`
