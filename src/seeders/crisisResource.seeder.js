@@ -2,8 +2,8 @@ import { CrisisResource } from '../models/postgres/index.js';
 import logger from '../utils/logger.js';
 
 const crisisResources = [
-
   {
+    type: 'hotline',
     name: 'Nigeria Suicide Prevention Initiative',
     country: 'Nigeria',
     phoneNumber: '0800-000-0000',
@@ -14,6 +14,7 @@ const crisisResources = [
     isActive: true,
   },
   {
+    type: 'hotline',
     name: 'ASUPE Mental Health Support Nigeria',
     country: 'Nigeria',
     phoneNumber: '+234-806-210-6493',
@@ -24,6 +25,7 @@ const crisisResources = [
     isActive: true,
   },
   {
+    type: 'organization',
     name: 'Mentally Aware Nigeria Initiative (MANI)',
     country: 'Nigeria',
     phoneNumber: '+234-808-198-0779',
@@ -33,8 +35,8 @@ const crisisResources = [
     religion: null,
     isActive: true,
   },
-
   {
+    type: 'directory',
     name: 'International Association for Suicide Prevention',
     country: 'Global',
     phoneNumber: null,
@@ -45,6 +47,7 @@ const crisisResources = [
     isActive: true,
   },
   {
+    type: 'text',
     name: 'Crisis Text Line',
     country: 'Global',
     phoneNumber: 'Text HOME to 741741',
@@ -54,8 +57,8 @@ const crisisResources = [
     religion: null,
     isActive: true,
   },
-
   {
+    type: 'hotline',
     name: 'Muslim Youth Helpline',
     country: 'Global',
     phoneNumber: '0808-808-2008',
@@ -66,6 +69,7 @@ const crisisResources = [
     isActive: true,
   },
   {
+    type: 'hotline',
     name: 'Islamic Helpline',
     country: 'Global',
     phoneNumber: '+44-207-247-7474',
@@ -75,8 +79,8 @@ const crisisResources = [
     religion: 'Islam',
     isActive: true,
   },
-
   {
+    type: 'counseling',
     name: 'Focus on the Family Nigeria',
     country: 'Nigeria',
     phoneNumber: '+234-1-740-1000',
@@ -87,6 +91,7 @@ const crisisResources = [
     isActive: true,
   },
   {
+    type: 'hotline',
     name: 'Christian Helplines',
     country: 'Global',
     phoneNumber: null,
@@ -96,8 +101,8 @@ const crisisResources = [
     religion: 'Christianity',
     isActive: true,
   },
-
   {
+    type: 'hotline',
     name: 'National Suicide Prevention Lifeline',
     country: 'United States',
     phoneNumber: '988',
@@ -107,8 +112,8 @@ const crisisResources = [
     religion: null,
     isActive: true,
   },
-
   {
+    type: 'hotline',
     name: 'Samaritans',
     country: 'United Kingdom',
     phoneNumber: '116 123',
