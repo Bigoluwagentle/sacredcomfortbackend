@@ -51,30 +51,93 @@ quranAudios.forEach((audio) => {
   }
 });
 
-const bibleAudios = [
-  { title: 'Psalm 23', verseId: 10001, audioUrl: 'https://www.bible.com/audio-bible/59/PSA.23.ESV', duration: 120 },
-  { title: 'Psalm 91', verseId: 10002, audioUrl: 'https://www.bible.com/audio-bible/59/PSA.91.ESV', duration: 180 },
-  { title: 'Psalm 121', verseId: 10003, audioUrl: 'https://www.bible.com/audio-bible/59/PSA.121.ESV', duration: 90 },
-  { title: 'John 3', verseId: 10004, audioUrl: 'https://www.bible.com/audio-bible/59/JHN.3.ESV', duration: 300 },
-  { title: 'John 14', verseId: 10005, audioUrl: 'https://www.bible.com/audio-bible/59/JHN.14.ESV', duration: 240 },
-  { title: 'Romans 8', verseId: 10006, audioUrl: 'https://www.bible.com/audio-bible/59/ROM.8.ESV', duration: 360 },
-  { title: 'Philippians 4', verseId: 10007, audioUrl: 'https://www.bible.com/audio-bible/59/PHP.4.ESV', duration: 240 },
-  { title: 'Isaiah 53', verseId: 10008, audioUrl: 'https://www.bible.com/audio-bible/59/ISA.53.ESV', duration: 180 },
-  { title: 'Isaiah 40', verseId: 10009, audioUrl: 'https://www.bible.com/audio-bible/59/ISA.40.ESV', duration: 300 },
-  { title: 'Matthew 5', verseId: 10010, audioUrl: 'https://www.bible.com/audio-bible/59/MAT.5.ESV', duration: 420 },
-  { title: '1 Corinthians 13', verseId: 10011, audioUrl: 'https://www.bible.com/audio-bible/59/1CO.13.ESV', duration: 180 },
-  { title: 'Hebrews 11', verseId: 10012, audioUrl: 'https://www.bible.com/audio-bible/59/HEB.11.ESV', duration: 360 },
-  { title: 'Proverbs 31', verseId: 10013, audioUrl: 'https://www.bible.com/audio-bible/59/PRO.31.ESV', duration: 240 },
-  { title: 'Genesis 1', verseId: 10014, audioUrl: 'https://www.bible.com/audio-bible/59/GEN.1.ESV', duration: 300 },
-  { title: 'Revelation 21', verseId: 10015, audioUrl: 'https://www.bible.com/audio-bible/59/REV.21.ESV', duration: 270 },
-].map((b) => ({
-  ...b,
-  reciterName: 'Max McLean',
-  religion: 'Christianity',
-  audioType: 'bible_reading',
-  language: 'en',
-  isActive: true,
-}));
+const bibleBooks = [
+  { name: 'Genesis', abbrev: 'GEN', chapters: 50 },
+  { name: 'Exodus', abbrev: 'EXO', chapters: 40 },
+  { name: 'Leviticus', abbrev: 'LEV', chapters: 27 },
+  { name: 'Numbers', abbrev: 'NUM', chapters: 36 },
+  { name: 'Deuteronomy', abbrev: 'DEU', chapters: 34 },
+  { name: 'Joshua', abbrev: 'JOS', chapters: 24 },
+  { name: 'Judges', abbrev: 'JDG', chapters: 21 },
+  { name: 'Ruth', abbrev: 'RUT', chapters: 4 },
+  { name: '1 Samuel', abbrev: '1SA', chapters: 31 },
+  { name: '2 Samuel', abbrev: '2SA', chapters: 24 },
+  { name: '1 Kings', abbrev: '1KI', chapters: 22 },
+  { name: '2 Kings', abbrev: '2KI', chapters: 25 },
+  { name: '1 Chronicles', abbrev: '1CH', chapters: 29 },
+  { name: '2 Chronicles', abbrev: '2CH', chapters: 36 },
+  { name: 'Ezra', abbrev: 'EZR', chapters: 10 },
+  { name: 'Nehemiah', abbrev: 'NEH', chapters: 13 },
+  { name: 'Esther', abbrev: 'EST', chapters: 10 },
+  { name: 'Job', abbrev: 'JOB', chapters: 42 },
+  { name: 'Psalms', abbrev: 'PSA', chapters: 150 },
+  { name: 'Proverbs', abbrev: 'PRO', chapters: 31 },
+  { name: 'Ecclesiastes', abbrev: 'ECC', chapters: 12 },
+  { name: 'Song of Solomon', abbrev: 'SNG', chapters: 8 },
+  { name: 'Isaiah', abbrev: 'ISA', chapters: 66 },
+  { name: 'Jeremiah', abbrev: 'JER', chapters: 52 },
+  { name: 'Lamentations', abbrev: 'LAM', chapters: 5 },
+  { name: 'Ezekiel', abbrev: 'EZK', chapters: 48 },
+  { name: 'Daniel', abbrev: 'DAN', chapters: 12 },
+  { name: 'Hosea', abbrev: 'HOS', chapters: 14 },
+  { name: 'Joel', abbrev: 'JOL', chapters: 3 },
+  { name: 'Amos', abbrev: 'AMO', chapters: 9 },
+  { name: 'Obadiah', abbrev: 'OBA', chapters: 1 },
+  { name: 'Jonah', abbrev: 'JON', chapters: 4 },
+  { name: 'Micah', abbrev: 'MIC', chapters: 7 },
+  { name: 'Nahum', abbrev: 'NAM', chapters: 3 },
+  { name: 'Habakkuk', abbrev: 'HAB', chapters: 3 },
+  { name: 'Zephaniah', abbrev: 'ZEP', chapters: 3 },
+  { name: 'Haggai', abbrev: 'HAG', chapters: 2 },
+  { name: 'Zechariah', abbrev: 'ZEC', chapters: 14 },
+  { name: 'Malachi', abbrev: 'MAL', chapters: 4 },
+  { name: 'Matthew', abbrev: 'MAT', chapters: 28 },
+  { name: 'Mark', abbrev: 'MRK', chapters: 16 },
+  { name: 'Luke', abbrev: 'LUK', chapters: 24 },
+  { name: 'John', abbrev: 'JHN', chapters: 21 },
+  { name: 'Acts', abbrev: 'ACT', chapters: 28 },
+  { name: 'Romans', abbrev: 'ROM', chapters: 16 },
+  { name: '1 Corinthians', abbrev: '1CO', chapters: 16 },
+  { name: '2 Corinthians', abbrev: '2CO', chapters: 13 },
+  { name: 'Galatians', abbrev: 'GAL', chapters: 6 },
+  { name: 'Ephesians', abbrev: 'EPH', chapters: 6 },
+  { name: 'Philippians', abbrev: 'PHP', chapters: 4 },
+  { name: 'Colossians', abbrev: 'COL', chapters: 4 },
+  { name: '1 Thessalonians', abbrev: '1TH', chapters: 5 },
+  { name: '2 Thessalonians', abbrev: '2TH', chapters: 3 },
+  { name: '1 Timothy', abbrev: '1TI', chapters: 6 },
+  { name: '2 Timothy', abbrev: '2TI', chapters: 4 },
+  { name: 'Titus', abbrev: 'TIT', chapters: 3 },
+  { name: 'Philemon', abbrev: 'PHM', chapters: 1 },
+  { name: 'Hebrews', abbrev: 'HEB', chapters: 13 },
+  { name: 'James', abbrev: 'JAS', chapters: 5 },
+  { name: '1 Peter', abbrev: '1PE', chapters: 5 },
+  { name: '2 Peter', abbrev: '2PE', chapters: 3 },
+  { name: '1 John', abbrev: '1JN', chapters: 5 },
+  { name: '2 John', abbrev: '2JN', chapters: 1 },
+  { name: '3 John', abbrev: '3JN', chapters: 1 },
+  { name: 'Jude', abbrev: 'JUD', chapters: 1 },
+  { name: 'Revelation', abbrev: 'REV', chapters: 22 },
+];
+
+const bibleAudios = [];
+let verseIdCounter = 10001;
+
+for (const book of bibleBooks) {
+  for (let chapter = 1; chapter <= book.chapters; chapter++) {
+    bibleAudios.push({
+      title: `${book.name} ${chapter}`,
+      reciterName: 'Max McLean',
+      audioUrl: `https://www.bible.com/audio-bible/59/${book.abbrev}.${chapter}.ESV`,
+      religion: 'Christianity',
+      audioType: 'bible_reading',
+      language: 'en',
+      verseId: verseIdCounter++,
+      duration: 0,
+      isActive: true,
+    });
+  }
+}
 
 const audioFiles = [...quranAudios, ...bibleAudios];
 
@@ -82,8 +145,8 @@ export const seedAudioFiles = async () => {
   try {
     const count = await AudioFile.count();
     if (count > 0) {
-      logger.info(`Audio files already seeded (${count} records). Skipping...`);
-      return;
+      logger.info(`Audio files already seeded (${count} records). Clearing and reseeding...`);
+      await AudioFile.destroy({ where: {} });
     }
 
     await AudioFile.bulkCreate(audioFiles);
