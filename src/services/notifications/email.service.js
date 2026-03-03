@@ -1,16 +1,19 @@
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 import logger from '../../utils/logger.js';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_FROM,
+    pass: process.env.EMAIL_APP_PASSWORD,
+  },
+});
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    await sgMail.send({
+    await transporter.sendMail({
+      from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>`,
       to,
-      from: {
-        email: process.env.EMAIL_FROM,
-        name: process.env.EMAIL_FROM_NAME,
-      },
       subject,
       html,
     });
@@ -23,7 +26,6 @@ const sendEmail = async ({ to, subject, html }) => {
 
 export const sendPasswordResetEmail = async (email, resetToken, fullName) => {
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #4A90A4;">Sacred Comfort</h2>
@@ -39,7 +41,6 @@ export const sendPasswordResetEmail = async (email, resetToken, fullName) => {
       <p>Blessings,<br/>The Sacred Comfort Team</p>
     </div>
   `;
-
   await sendEmail({ to: email, subject: 'Password Reset Request - Sacred Comfort', html });
 };
 
@@ -60,7 +61,6 @@ export const sendWelcomeEmail = async (email, fullName) => {
       <p>Blessings,<br/>The Sacred Comfort Team</p>
     </div>
   `;
-
   await sendEmail({ to: email, subject: 'Welcome to Sacred Comfort', html });
 };
 
@@ -78,10 +78,7 @@ export const sendVerificationOTPEmail = async (email, fullName, otp) => {
       <p>Blessings,<br/>The Sacred Comfort Team</p>
     </div>
   `;
-
   await sendEmail({ to: email, subject: 'Verify Your Email - Sacred Comfort', html });
 };
 
 export default sendEmail;
-
-
