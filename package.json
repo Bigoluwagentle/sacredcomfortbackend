@@ -18,6 +18,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@sendgrid/mail": "^8.1.6",
+    "@upstash/redis": "^1.36.3",
     "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
