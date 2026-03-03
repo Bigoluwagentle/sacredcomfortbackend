@@ -1,6 +1,31 @@
-import axios from 'axios';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { Bible } from '../models/postgres/index.js';
 import logger from '../utils/logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const bookNames = {
+  'gn': 'Genesis', 'ex': 'Exodus', 'lv': 'Leviticus', 'nm': 'Numbers',
+  'dt': 'Deuteronomy', 'js': 'Joshua', 'jud': 'Judges', 'rt': 'Ruth',
+  '1sm': '1 Samuel', '2sm': '2 Samuel', '1kgs': '1 Kings', '2kgs': '2 Kings',
+  '1ch': '1 Chronicles', '2ch': '2 Chronicles', 'ezr': 'Ezra', 'ne': 'Nehemiah',
+  'est': 'Esther', 'job': 'Job', 'ps': 'Psalms', 'prv': 'Proverbs',
+  'ec': 'Ecclesiastes', 'so': 'Song of Solomon', 'is': 'Isaiah', 'jr': 'Jeremiah',
+  'lm': 'Lamentations', 'ez': 'Ezekiel', 'dn': 'Daniel', 'ho': 'Hosea',
+  'jl': 'Joel', 'am': 'Amos', 'ob': 'Obadiah', 'jn': 'Jonah', 'mi': 'Micah',
+  'na': 'Nahum', 'hk': 'Habakkuk', 'zp': 'Zephaniah', 'hg': 'Haggai',
+  'zc': 'Zechariah', 'ml': 'Malachi', 'mt': 'Matthew', 'mk': 'Mark',
+  'lk': 'Luke', 'jo': 'John', 'act': 'Acts', 'rm': 'Romans',
+  '1co': '1 Corinthians', '2co': '2 Corinthians', 'gl': 'Galatians',
+  'eph': 'Ephesians', 'ph': 'Philippians', 'cl': 'Colossians',
+  '1ts': '1 Thessalonians', '2ts': '2 Thessalonians', '1tm': '1 Timothy',
+  '2tm': '2 Timothy', 'tt': 'Titus', 'phm': 'Philemon', 'hb': 'Hebrews',
+  'jm': 'James', '1pe': '1 Peter', '2pe': '2 Peter', '1jo': '1 John',
+  '2jo': '2 John', '3jo': '3 John', 'jd': 'Jude', 're': 'Revelation',
+};
 
 const bookTags = {
   'Genesis': { themeTags: ['faith', 'purpose', 'family', 'creation'], emotionTags: ['confusion', 'hope'] },
@@ -71,68 +96,51 @@ const bookTags = {
   'Revelation': { themeTags: ['faith', 'hope', 'strength', 'victory'], emotionTags: ['fear', 'hope'] },
 };
 
-const books = [
-  'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy',
-  'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel',
-  '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles',
-  'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs',
-  'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah',
-  'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos',
-  'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah',
-  'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke',
-  'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians',
-  'Galatians', 'Ephesians', 'Philippians', 'Colossians',
-  '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy',
-  'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter',
-  '1 John', '2 John', '3 John', 'Jude', 'Revelation',
-];
-
 export const seedBible = async () => {
   try {
-    logger.info('Starting Bible seeding from GitHub KJV JSON...');
+    logger.info('Starting Bible seeding from local JSON file...');
+
+    const filePath = join(__dirname, 'bible.json');
+    const rawData = readFileSync(filePath, 'utf8');
+    const bibleData = JSON.parse(rawData);
+
     let totalSeeded = 0;
 
-    for (const bookName of books) {
+    for (const book of bibleData) {
+      const bookName = bookNames[book.abbrev];
+      if (!bookName) {
+        logger.warn(`Unknown book abbreviation: ${book.abbrev}`);
+        continue;
+      }
+
       const existing = await Bible.count({ where: { bookName } });
       if (existing > 0) {
         logger.info(`Skipping ${bookName} - already seeded (${existing} verses)`);
         continue;
       }
 
-      try {
-        const encodedBook = encodeURIComponent(bookName);
-        const url = `https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/${encodedBook}.json`;
-        const response = await axios.get(url);
-        const bookData = response.data;
+      const tags = bookTags[bookName] || { themeTags: ['faith', 'guidance'], emotionTags: ['hope'] };
+      const versesToInsert = [];
 
-        const tags = bookTags[bookName] || { themeTags: ['faith', 'guidance'], emotionTags: ['hope'] };
-        const versesToInsert = [];
+      book.chapters.forEach((chapter, chapterIndex) => {
+        chapter.forEach((verseText, verseIndex) => {
+          versesToInsert.push({
+            bookName,
+            chapterNumber: chapterIndex + 1,
+            verseNumber: verseIndex + 1,
+            textKJV: verseText.trim(),
+            textNIV: verseText.trim(),
+            themeTags: tags.themeTags,
+            emotionTags: tags.emotionTags,
+            religion: 'Christianity',
+            embeddingVector: [],
+          });
+        });
+      });
 
-        for (const chapter of bookData.chapters) {
-          for (const verse of chapter.verses) {
-            versesToInsert.push({
-              bookName,
-              chapterNumber: chapter.chapter,
-              verseNumber: verse.verse,
-              textKJV: verse.text.trim(),
-              textNIV: verse.text.trim(),
-              themeTags: tags.themeTags,
-              emotionTags: tags.emotionTags,
-              religion: 'Christianity',
-              embeddingVector: [],
-            });
-          }
-        }
-
-        await Bible.bulkCreate(versesToInsert);
-        totalSeeded += versesToInsert.length;
-        logger.info(`✅ Seeded ${bookName} - ${versesToInsert.length} verses`);
-
-        await new Promise((resolve) => setTimeout(resolve, 200));
-
-      } catch (bookError) {
-        logger.error(`Error seeding ${bookName}: ${bookError.message}`);
-      }
+      await Bible.bulkCreate(versesToInsert);
+      totalSeeded += versesToInsert.length;
+      logger.info(`✅ Seeded ${bookName} - ${versesToInsert.length} verses`);
     }
 
     logger.info(`✅ Bible seeding complete. Total verses: ${totalSeeded}`);
