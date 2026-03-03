@@ -17,9 +17,16 @@ import logger from './utils/logger.js';
 const app = express();
 const httpServer = createServer(app);
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://sacredcomfort.vercel.app',
+].filter(Boolean);
+
 export const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: allowedOrigins,
     credentials: true,
   },
 });
@@ -28,7 +35,7 @@ app.use(helmet());
 app.use(hpp());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 }));
