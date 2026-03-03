@@ -2,168 +2,136 @@ import axios from 'axios';
 import { Bible } from '../models/postgres/index.js';
 import logger from '../utils/logger.js';
 
-const BIBLE_API_KEY = process.env.BIBLE_API_KEY || "eXyaixjI2QkrgWmbK-B1S";
-const BIBLE_API_URL = 'https://rest.api.bible/v1';
-
-const KJV_BIBLE_ID = 'de4e12af7f28f599-02';
-const NIV_BIBLE_ID = '06125adad2d5898a-01';
-
 const bookTags = {
-  'GEN': { themeTags: ['faith', 'purpose', 'family', 'creation'], emotionTags: ['confusion', 'hope'] },
-  'EXO': { themeTags: ['faith', 'freedom', 'trust', 'guidance'], emotionTags: ['fear', 'hope'] },
-  'LEV': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['confusion', 'hope'] },
-  'NUM': { themeTags: ['faith', 'patience', 'guidance'], emotionTags: ['confusion', 'hope'] },
-  'DEU': { themeTags: ['faith', 'guidance', 'love'], emotionTags: ['confusion', 'hope'] },
-  'JOS': { themeTags: ['faith', 'strength', 'trust'], emotionTags: ['fear', 'hope'] },
-  'JDG': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
-  'RUT': { themeTags: ['family', 'love', 'loyalty'], emotionTags: ['loneliness', 'hope'] },
-  '1SA': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
-  '2SA': { themeTags: ['faith', 'forgiveness', 'guidance'], emotionTags: ['sadness', 'hope'] },
-  '1KI': { themeTags: ['faith', 'wisdom', 'guidance'], emotionTags: ['confusion', 'hope'] },
-  '2KI': { themeTags: ['faith', 'trust', 'guidance'], emotionTags: ['fear', 'hope'] },
-  '1CH': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['gratitude', 'hope'] },
-  '2CH': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['gratitude', 'hope'] },
-  'EZR': { themeTags: ['faith', 'restoration', 'guidance'], emotionTags: ['hope', 'gratitude'] },
-  'NEH': { themeTags: ['faith', 'strength', 'restoration'], emotionTags: ['anxiety', 'hope'] },
-  'EST': { themeTags: ['faith', 'courage', 'trust'], emotionTags: ['fear', 'hope'] },
-  'JOB': { themeTags: ['patience', 'faith', 'suffering', 'trust'], emotionTags: ['grief', 'sadness', 'confusion', 'hope'] },
-  'PSA': { themeTags: ['worship', 'faith', 'trust', 'hope', 'gratitude'], emotionTags: ['anxiety', 'sadness', 'joy', 'gratitude', 'hope'] },
-  'PRO': { themeTags: ['wisdom', 'guidance', 'family', 'work'], emotionTags: ['confusion', 'hope'] },
-  'ECC': { themeTags: ['purpose', 'wisdom', 'faith'], emotionTags: ['confusion', 'sadness', 'hope'] },
-  'SNG': { themeTags: ['love', 'relationships', 'family'], emotionTags: ['joy', 'loneliness'] },
-  'ISA': { themeTags: ['hope', 'faith', 'strength', 'trust'], emotionTags: ['fear', 'sadness', 'hope'] },
-  'JER': { themeTags: ['faith', 'trust', 'hope', 'patience'], emotionTags: ['sadness', 'grief', 'hope'] },
-  'LAM': { themeTags: ['grief', 'hope', 'faith'], emotionTags: ['grief', 'sadness', 'hope'] },
-  'EZK': { themeTags: ['faith', 'restoration', 'hope'], emotionTags: ['confusion', 'hope'] },
-  'DAN': { themeTags: ['faith', 'trust', 'strength'], emotionTags: ['fear', 'hope'] },
-  'HOS': { themeTags: ['love', 'faith', 'forgiveness'], emotionTags: ['sadness', 'hope'] },
-  'JOL': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['sadness', 'hope'] },
-  'AMO': { themeTags: ['justice', 'faith', 'guidance'], emotionTags: ['anger', 'hope'] },
-  'OBA': { themeTags: ['faith', 'justice', 'guidance'], emotionTags: ['anger', 'hope'] },
-  'JON': { themeTags: ['faith', 'mercy', 'forgiveness'], emotionTags: ['fear', 'gratitude'] },
-  'MIC': { themeTags: ['justice', 'faith', 'hope'], emotionTags: ['anger', 'hope'] },
-  'NAM': { themeTags: ['faith', 'justice', 'trust'], emotionTags: ['fear', 'hope'] },
-  'HAB': { themeTags: ['faith', 'trust', 'patience'], emotionTags: ['confusion', 'hope'] },
-  'ZEP': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['fear', 'hope'] },
-  'HAG': { themeTags: ['faith', 'work', 'restoration'], emotionTags: ['confusion', 'hope'] },
-  'ZEC': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['confusion', 'hope'] },
-  'MAL': { themeTags: ['faith', 'love', 'restoration'], emotionTags: ['sadness', 'hope'] },
-  'MAT': { themeTags: ['faith', 'love', 'guidance', 'kingdom'], emotionTags: ['confusion', 'hope', 'joy'] },
-  'MRK': { themeTags: ['faith', 'healing', 'strength'], emotionTags: ['fear', 'hope'] },
-  'LUK': { themeTags: ['faith', 'love', 'mercy', 'hope'], emotionTags: ['joy', 'hope', 'gratitude'] },
-  'JHN': { themeTags: ['faith', 'love', 'eternal life', 'hope'], emotionTags: ['joy', 'hope', 'love'] },
-  'ACT': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope', 'joy'] },
-  'ROM': { themeTags: ['faith', 'grace', 'hope', 'love'], emotionTags: ['confusion', 'hope', 'gratitude'] },
-  '1CO': { themeTags: ['love', 'faith', 'relationships', 'wisdom'], emotionTags: ['confusion', 'hope', 'love'] },
-  '2CO': { themeTags: ['faith', 'strength', 'hope', 'suffering'], emotionTags: ['sadness', 'hope', 'gratitude'] },
-  'GAL': { themeTags: ['faith', 'freedom', 'grace'], emotionTags: ['confusion', 'hope'] },
-  'EPH': { themeTags: ['faith', 'love', 'strength', 'family'], emotionTags: ['confusion', 'hope', 'joy'] },
-  'PHP': { themeTags: ['joy', 'faith', 'peace', 'contentment'], emotionTags: ['anxiety', 'joy', 'gratitude'] },
-  'COL': { themeTags: ['faith', 'wisdom', 'love'], emotionTags: ['confusion', 'hope'] },
-  '1TH': { themeTags: ['faith', 'hope', 'love'], emotionTags: ['grief', 'hope'] },
-  '2TH': { themeTags: ['faith', 'hope', 'patience'], emotionTags: ['anxiety', 'hope'] },
-  '1TI': { themeTags: ['faith', 'guidance', 'wisdom'], emotionTags: ['confusion', 'hope'] },
-  '2TI': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
-  'TIT': { themeTags: ['faith', 'guidance', 'wisdom'], emotionTags: ['confusion', 'hope'] },
-  'PHM': { themeTags: ['forgiveness', 'love', 'relationships'], emotionTags: ['anger', 'hope'] },
-  'HEB': { themeTags: ['faith', 'hope', 'strength', 'perseverance'], emotionTags: ['anxiety', 'hope'] },
-  'JAS': { themeTags: ['faith', 'wisdom', 'patience', 'work'], emotionTags: ['confusion', 'hope'] },
-  '1PE': { themeTags: ['faith', 'hope', 'suffering', 'strength'], emotionTags: ['sadness', 'hope'] },
-  '2PE': { themeTags: ['faith', 'guidance', 'hope'], emotionTags: ['confusion', 'hope'] },
-  '1JN': { themeTags: ['love', 'faith', 'relationships'], emotionTags: ['loneliness', 'hope', 'love'] },
-  '2JN': { themeTags: ['love', 'faith', 'guidance'], emotionTags: ['confusion', 'hope'] },
-  '3JN': { themeTags: ['faith', 'love', 'guidance'], emotionTags: ['confusion', 'hope'] },
-  'JUD': { themeTags: ['faith', 'guidance', 'strength'], emotionTags: ['fear', 'hope'] },
-  'REV': { themeTags: ['faith', 'hope', 'strength', 'victory'], emotionTags: ['fear', 'hope'] },
+  'Genesis': { themeTags: ['faith', 'purpose', 'family', 'creation'], emotionTags: ['confusion', 'hope'] },
+  'Exodus': { themeTags: ['faith', 'freedom', 'trust', 'guidance'], emotionTags: ['fear', 'hope'] },
+  'Leviticus': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['confusion', 'hope'] },
+  'Numbers': { themeTags: ['faith', 'patience', 'guidance'], emotionTags: ['confusion', 'hope'] },
+  'Deuteronomy': { themeTags: ['faith', 'guidance', 'love'], emotionTags: ['confusion', 'hope'] },
+  'Joshua': { themeTags: ['faith', 'strength', 'trust'], emotionTags: ['fear', 'hope'] },
+  'Judges': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
+  'Ruth': { themeTags: ['family', 'love', 'loyalty'], emotionTags: ['loneliness', 'hope'] },
+  '1 Samuel': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
+  '2 Samuel': { themeTags: ['faith', 'forgiveness', 'guidance'], emotionTags: ['sadness', 'hope'] },
+  '1 Kings': { themeTags: ['faith', 'wisdom', 'guidance'], emotionTags: ['confusion', 'hope'] },
+  '2 Kings': { themeTags: ['faith', 'trust', 'guidance'], emotionTags: ['fear', 'hope'] },
+  '1 Chronicles': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['gratitude', 'hope'] },
+  '2 Chronicles': { themeTags: ['faith', 'worship', 'guidance'], emotionTags: ['gratitude', 'hope'] },
+  'Ezra': { themeTags: ['faith', 'restoration', 'guidance'], emotionTags: ['hope', 'gratitude'] },
+  'Nehemiah': { themeTags: ['faith', 'strength', 'restoration'], emotionTags: ['anxiety', 'hope'] },
+  'Esther': { themeTags: ['faith', 'courage', 'trust'], emotionTags: ['fear', 'hope'] },
+  'Job': { themeTags: ['patience', 'faith', 'suffering', 'trust'], emotionTags: ['grief', 'sadness', 'confusion', 'hope'] },
+  'Psalms': { themeTags: ['worship', 'faith', 'trust', 'hope', 'gratitude'], emotionTags: ['anxiety', 'sadness', 'joy', 'gratitude', 'hope'] },
+  'Proverbs': { themeTags: ['wisdom', 'guidance', 'family', 'work'], emotionTags: ['confusion', 'hope'] },
+  'Ecclesiastes': { themeTags: ['purpose', 'wisdom', 'faith'], emotionTags: ['confusion', 'sadness', 'hope'] },
+  'Song of Solomon': { themeTags: ['love', 'relationships', 'family'], emotionTags: ['joy', 'loneliness'] },
+  'Isaiah': { themeTags: ['hope', 'faith', 'strength', 'trust'], emotionTags: ['fear', 'sadness', 'hope'] },
+  'Jeremiah': { themeTags: ['faith', 'trust', 'hope', 'patience'], emotionTags: ['sadness', 'grief', 'hope'] },
+  'Lamentations': { themeTags: ['grief', 'hope', 'faith'], emotionTags: ['grief', 'sadness', 'hope'] },
+  'Ezekiel': { themeTags: ['faith', 'restoration', 'hope'], emotionTags: ['confusion', 'hope'] },
+  'Daniel': { themeTags: ['faith', 'trust', 'strength'], emotionTags: ['fear', 'hope'] },
+  'Hosea': { themeTags: ['love', 'faith', 'forgiveness'], emotionTags: ['sadness', 'hope'] },
+  'Joel': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['sadness', 'hope'] },
+  'Amos': { themeTags: ['justice', 'faith', 'guidance'], emotionTags: ['anger', 'hope'] },
+  'Obadiah': { themeTags: ['faith', 'justice', 'guidance'], emotionTags: ['anger', 'hope'] },
+  'Jonah': { themeTags: ['faith', 'mercy', 'forgiveness'], emotionTags: ['fear', 'gratitude'] },
+  'Micah': { themeTags: ['justice', 'faith', 'hope'], emotionTags: ['anger', 'hope'] },
+  'Nahum': { themeTags: ['faith', 'justice', 'trust'], emotionTags: ['fear', 'hope'] },
+  'Habakkuk': { themeTags: ['faith', 'trust', 'patience'], emotionTags: ['confusion', 'hope'] },
+  'Zephaniah': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['fear', 'hope'] },
+  'Haggai': { themeTags: ['faith', 'work', 'restoration'], emotionTags: ['confusion', 'hope'] },
+  'Zechariah': { themeTags: ['faith', 'hope', 'restoration'], emotionTags: ['confusion', 'hope'] },
+  'Malachi': { themeTags: ['faith', 'love', 'restoration'], emotionTags: ['sadness', 'hope'] },
+  'Matthew': { themeTags: ['faith', 'love', 'guidance', 'kingdom'], emotionTags: ['confusion', 'hope', 'joy'] },
+  'Mark': { themeTags: ['faith', 'healing', 'strength'], emotionTags: ['fear', 'hope'] },
+  'Luke': { themeTags: ['faith', 'love', 'mercy', 'hope'], emotionTags: ['joy', 'hope', 'gratitude'] },
+  'John': { themeTags: ['faith', 'love', 'eternal life', 'hope'], emotionTags: ['joy', 'hope', 'love'] },
+  'Acts': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope', 'joy'] },
+  'Romans': { themeTags: ['faith', 'grace', 'hope', 'love'], emotionTags: ['confusion', 'hope', 'gratitude'] },
+  '1 Corinthians': { themeTags: ['love', 'faith', 'relationships', 'wisdom'], emotionTags: ['confusion', 'hope', 'love'] },
+  '2 Corinthians': { themeTags: ['faith', 'strength', 'hope', 'suffering'], emotionTags: ['sadness', 'hope', 'gratitude'] },
+  'Galatians': { themeTags: ['faith', 'freedom', 'grace'], emotionTags: ['confusion', 'hope'] },
+  'Ephesians': { themeTags: ['faith', 'love', 'strength', 'family'], emotionTags: ['confusion', 'hope', 'joy'] },
+  'Philippians': { themeTags: ['joy', 'faith', 'peace', 'contentment'], emotionTags: ['anxiety', 'joy', 'gratitude'] },
+  'Colossians': { themeTags: ['faith', 'wisdom', 'love'], emotionTags: ['confusion', 'hope'] },
+  '1 Thessalonians': { themeTags: ['faith', 'hope', 'love'], emotionTags: ['grief', 'hope'] },
+  '2 Thessalonians': { themeTags: ['faith', 'hope', 'patience'], emotionTags: ['anxiety', 'hope'] },
+  '1 Timothy': { themeTags: ['faith', 'guidance', 'wisdom'], emotionTags: ['confusion', 'hope'] },
+  '2 Timothy': { themeTags: ['faith', 'strength', 'guidance'], emotionTags: ['fear', 'hope'] },
+  'Titus': { themeTags: ['faith', 'guidance', 'wisdom'], emotionTags: ['confusion', 'hope'] },
+  'Philemon': { themeTags: ['forgiveness', 'love', 'relationships'], emotionTags: ['anger', 'hope'] },
+  'Hebrews': { themeTags: ['faith', 'hope', 'strength', 'perseverance'], emotionTags: ['anxiety', 'hope'] },
+  'James': { themeTags: ['faith', 'wisdom', 'patience', 'work'], emotionTags: ['confusion', 'hope'] },
+  '1 Peter': { themeTags: ['faith', 'hope', 'suffering', 'strength'], emotionTags: ['sadness', 'hope'] },
+  '2 Peter': { themeTags: ['faith', 'guidance', 'hope'], emotionTags: ['confusion', 'hope'] },
+  '1 John': { themeTags: ['love', 'faith', 'relationships'], emotionTags: ['loneliness', 'hope', 'love'] },
+  '2 John': { themeTags: ['love', 'faith', 'guidance'], emotionTags: ['confusion', 'hope'] },
+  '3 John': { themeTags: ['faith', 'love', 'guidance'], emotionTags: ['confusion', 'hope'] },
+  'Jude': { themeTags: ['faith', 'guidance', 'strength'], emotionTags: ['fear', 'hope'] },
+  'Revelation': { themeTags: ['faith', 'hope', 'strength', 'victory'], emotionTags: ['fear', 'hope'] },
 };
+
+const books = [
+  'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy',
+  'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel',
+  '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles',
+  'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs',
+  'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah',
+  'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos',
+  'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah',
+  'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke',
+  'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians',
+  'Galatians', 'Ephesians', 'Philippians', 'Colossians',
+  '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy',
+  'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter',
+  '1 John', '2 John', '3 John', 'Jude', 'Revelation',
+];
 
 export const seedBible = async () => {
   try {
-    logger.info('Starting Bible seeding from API...');
-    const booksResponse = await axios.get(
-      `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/books`,
-      { headers: { 'api-key': BIBLE_API_KEY } }
-    );
-    const books = booksResponse.data.data;
+    logger.info('Starting Bible seeding from GitHub KJV JSON...');
     let totalSeeded = 0;
 
-    for (const book of books) {
-      const existing = await Bible.count({ where: { bookName: book.name } });
+    for (const bookName of books) {
+      const existing = await Bible.count({ where: { bookName } });
       if (existing > 0) {
-        logger.info(`Skipping ${book.name} - already seeded (${existing} verses)`);
+        logger.info(`Skipping ${bookName} - already seeded (${existing} verses)`);
         continue;
       }
+
       try {
-        const chaptersResponse = await axios.get(
-          `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/books/${book.id}/chapters`,
-          { headers: { 'api-key': BIBLE_API_KEY } }
-        );
+        const encodedBook = encodeURIComponent(bookName);
+        const url = `https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/${encodedBook}.json`;
+        const response = await axios.get(url);
+        const bookData = response.data;
 
-        const chapters = chaptersResponse.data.data.filter(
-          (c) => c.id !== `${book.id}.intro`
-        );
+        const tags = bookTags[bookName] || { themeTags: ['faith', 'guidance'], emotionTags: ['hope'] };
+        const versesToInsert = [];
 
-        const tags = bookTags[book.id] || {
-          themeTags: ['faith', 'guidance'],
-          emotionTags: ['hope'],
-        };
-
-        for (const chapter of chapters) {
-          try {
-            const versesResponse = await axios.get(
-              `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/chapters/${chapter.id}/verses`,
-              { headers: { 'api-key': BIBLE_API_KEY } }
-            );
-
-            const verses = versesResponse.data.data;
-
-            for (const verse of verses) {
-              try {
-                const verseResponse = await axios.get(
-                  `${BIBLE_API_URL}/bibles/${KJV_BIBLE_ID}/verses/${verse.id}?content-type=text&include-notes=false&include-titles=false`,
-                  { headers: { 'api-key': BIBLE_API_KEY } }
-                );
-
-                const verseText = verseResponse.data.data.content
-                  .replace(/<[^>]*>/g, '')
-                  .trim();
-
-                const chapterNum = parseInt(chapter.number);
-                const verseNum = parseInt(verse.id.split('.')[2]);
-
-                if (!isNaN(chapterNum) && !isNaN(verseNum)) {
-                  await Bible.create({
-                    bookName: book.name,
-                    chapterNumber: chapterNum,
-                    verseNumber: verseNum,
-                    textKJV: verseText,
-                    textNIV: verseText,
-                    themeTags: tags.themeTags,
-                    emotionTags: tags.emotionTags,
-                    religion: 'Christianity',
-                    embeddingVector: [],
-                  });
-                  totalSeeded++;
-                }
-
-                await new Promise((resolve) => setTimeout(resolve, 500));
-
-              } catch (verseError) {
-                logger.error(`Error seeding verse ${verse.id}: ${verseError.message}`);
-              }
-            }
-
-            logger.info(`Seeded ${book.name} Chapter ${chapter.number}`);
-
-          } catch (chapterError) {
-            logger.error(`Error seeding chapter ${chapter.id}: ${chapterError.message}`);
+        for (const chapter of bookData.chapters) {
+          for (const verse of chapter.verses) {
+            versesToInsert.push({
+              bookName,
+              chapterNumber: chapter.chapter,
+              verseNumber: verse.verse,
+              textKJV: verse.text.trim(),
+              textNIV: verse.text.trim(),
+              themeTags: tags.themeTags,
+              emotionTags: tags.emotionTags,
+              religion: 'Christianity',
+              embeddingVector: [],
+            });
           }
         }
 
-        logger.info(`✅ Completed ${book.name}`);
+        await Bible.bulkCreate(versesToInsert);
+        totalSeeded += versesToInsert.length;
+        logger.info(`✅ Seeded ${bookName} - ${versesToInsert.length} verses`);
+
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
       } catch (bookError) {
-        logger.error(`Error seeding book ${book.id}: ${bookError.message}`);
+        logger.error(`Error seeding ${bookName}: ${bookError.message}`);
       }
     }
 
