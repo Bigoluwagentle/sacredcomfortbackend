@@ -106,6 +106,10 @@ export const loginUser = async (email, password) => {
     throw new AppError('Invalid email or password.', 401);
   }
 
+  if (!user.isEmailVerified) {
+    throw new AppError('Please verify your email before logging in. Check your inbox for the OTP.', 401);
+  }
+
   user.lastSeen = new Date();
   await user.save({ validateBeforeSave: false });
 
@@ -128,7 +132,7 @@ export const forgotPassword = async (email) => {
     .update(resetToken)
     .digest('hex');
 
-  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; 
   await user.save({ validateBeforeSave: false });
 
   return { resetToken, user };
