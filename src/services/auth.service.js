@@ -44,7 +44,7 @@ export const registerUser = async (userData) => {
 };
 
 export const verifyEmail = async (userId, otp) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).select('+emailVerificationOTP +emailVerificationOTPExpires');
   if (!user) {
     throw new AppError('User not found.', 404);
   }
@@ -76,7 +76,7 @@ export const verifyEmail = async (userId, otp) => {
 };
 
 export const resendOTP = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).select('+emailVerificationOTP +emailVerificationOTPExpires');
   if (!user) {
     throw new AppError('User not found.', 404);
   }
