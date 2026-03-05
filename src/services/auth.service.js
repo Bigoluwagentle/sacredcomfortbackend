@@ -4,7 +4,7 @@ import Analytics from '../models/mongo/Analytics.model.js';
 import Memory from '../models/mongo/Memory.model.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { AppError } from '../middleware/error.middleware.js';
-import { sendVerificationOTPEmail, sendWelcomeEmail } from './notifications/email.service.js';
+import { sendVerificationOTPEmail, sendWelcomeEmail, sendPasswordResetEmail } from './notifications/email.service.js';
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -132,8 +132,10 @@ export const forgotPassword = async (email) => {
     .update(resetToken)
     .digest('hex');
 
-  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; 
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   await user.save({ validateBeforeSave: false });
+
+  await sendPasswordResetEmail(email, resetToken, user.fullName);
 
   return { resetToken, user };
 };
