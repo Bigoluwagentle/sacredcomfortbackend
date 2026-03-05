@@ -101,6 +101,10 @@ export const loginUser = async (email, password) => {
     throw new AppError('Invalid email or password.', 401);
   }
 
+  if (user.authProvider === 'google') {
+    throw new AppError('This account uses Google Sign-In. Please click "Continue with Google" to login.', 401);
+  }
+
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
     throw new AppError('Invalid email or password.', 401);
