@@ -5,6 +5,7 @@ import {
   getDailyVerseHandler,
   getQuranVerse,
   getBibleVerse,
+  getAudioFiles
 } from '../controllers/scripture.controller.js';
 import protect from '../middleware/auth.middleware.js';
 import religionFilter from '../middleware/religion.middleware.js';
@@ -19,5 +20,6 @@ router.get('/tags', searchByTags);
 router.get('/daily', getDailyVerseHandler);
 router.get('/quran/:surah/:ayah', getQuranVerse);
 router.get('/bible/:book/:chapter/:verse', getBibleVerse);
+router.get('/audio', getAudioFiles);
 
 export default router;
