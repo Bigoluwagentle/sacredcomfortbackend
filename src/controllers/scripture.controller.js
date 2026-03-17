@@ -1,7 +1,7 @@
 import { searchScriptureByTags, keywordSearchScripture, getDailyVerse } from '../services/scripture/search.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
-import { Quran, Bible, Hadith, Philosophy } from '../models/postgres/index.js';
+import { Quran, Bible, Hadith, Philosophy, AudioFile } from '../models/postgres/index.js';
 
 export const searchScripture = asyncHandler(async (req, res) => {
   const { q } = req.query;
@@ -86,9 +86,6 @@ export const getBibleVerse = asyncHandler(async (req, res) => {
 });
 
 export const getAudioFiles = asyncHandler(async (req, res) => {
-  const { AudioFile } = await import('../models/postgres/index.js');
-  const { Op } = await import('sequelize');
-
   const religion = req.query.religion || null;
   const where = {};
 
