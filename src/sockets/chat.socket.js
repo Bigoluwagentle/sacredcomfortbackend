@@ -226,8 +226,14 @@ export const initializeVoiceSocket = () => {
 
       } catch (error) {
         socket.emit('ai_processing', { isProcessing: false });
-        socket.emit('error', { message: 'Could not process audio. Please try again.' });
         logger.error(`Voice call error: ${error.message}`);
+        if (error.message.includes('Speech to text')) {
+          socket.emit('error', { message: 'Could not hear you clearly. Please speak again.' });
+        } else if (error.message.includes('Text to speech')) {
+          socket.emit('error', { message: 'AI voice unavailable. Please try again.' });
+        } else if (error.message.includes('credits') || error.message.includes('quota')) {
+          socket.emit('error', { message: 'AI service temporarily unavailable. Please try again later.' });
+        }
       }
     });
 
