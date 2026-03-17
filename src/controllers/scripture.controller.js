@@ -84,3 +84,25 @@ export const getBibleVerse = asyncHandler(async (req, res) => {
 
   successResponse(res, 200, 'Verse fetched successfully.', { verse });
 });
+
+export const getAudioFiles = asyncHandler(async (req, res) => {
+  const { AudioFile } = await import('../models/postgres/index.js');
+  const { Op } = await import('sequelize');
+
+  const religion = req.query.religion || null;
+  const where = {};
+
+  if (religion === 'Islam') {
+    where.religion = 'Islam';
+  } else if (religion === 'Christianity') {
+    where.religion = 'Christianity';
+  }
+
+  const tracks = await AudioFile.findAll({
+    where,
+    attributes: ['id', 'title', 'reciterName', 'audioUrl', 'religion', 'audioType', 'language', 'verseId', 'duration'],
+    order: [['verseId', 'ASC']],
+  });
+
+  successResponse(res, 200, 'Audio files fetched successfully.', { tracks });
+});
