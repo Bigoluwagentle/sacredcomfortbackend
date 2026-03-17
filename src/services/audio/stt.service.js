@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
-import fs from 'fs';
-import path from 'path';
+import { Readable } from 'stream';
 import logger from '../../utils/logger.js';
 
 const openai = new OpenAI({
@@ -9,21 +8,13 @@ const openai = new OpenAI({
 
 export const speechToText = async (audioBuffer, mimeType = 'audio/webm') => {
   try {
-    const tempDir = path.join(process.cwd(), 'temp');
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
-
-    const tempFilePath = path.join(tempDir, `audio_${Date.now()}.webm`);
-    fs.writeFileSync(tempFilePath, audioBuffer);
+    const blob = new File([audioBuffer], 'audio.webm', { type: 'audio/webm' });
 
     const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(tempFilePath),
+      file: blob,
       model: 'whisper-1',
       language: 'en',
     });
-
-    fs.unlinkSync(tempFilePath);
 
     return transcription.text;
   } catch (error) {
